@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+service JaccountService {
+  rpc GetCaptcha(CaptchaNonce) returns (CaptchaImage);
+  rpc SubmitCredentials(LoginForm) returns (GeneralResponse);
+}
+
+message CaptchaNonce { string nonce = 1; }
+message CaptchaImage { bytes img_blob = 1; }
+
+message LoginForm {
+  string user = 1;
+  string passwd = 2;
+  string captcha = 3;
+}
+
+message GeneralResponse {
+  bool success = 1;
+  string message = 2;
+}
