@@ -2,15 +2,18 @@
   <main id="app">
     <a-layout id="components-layout-demo-side" style="min-height: 100vh">
       <a-layout-header>
-        <!-- <h2 style="color: white">上海交通大学网络短信平台</h2> -->
         <a-menu
           theme="dark"
           mode="horizontal"
           :style="{ lineHeight: '64px', float: 'right' }"
-          v-model="selected"
           :defaultSelectedKeys="['1']"
           @select="handelMenuSelect"
         >
+          <a-menu-item key="home">
+            <a-icon type="home"/>
+            <span>主页</span>
+          </a-menu-item>
+
           <a-menu-item key="send">
             <a-icon type="mail"/>
             <span>发送短信</span>
@@ -59,11 +62,10 @@
       </a-layout-header>
 
       <a-layout>
-        <!-- <a-layout-sider collapsible v-model="collapsed" theme="light"></a-layout-sider> -->
         <a-layout-content>
-          <center>
+          <div class="container">
             <router-view/>
-          </center>
+          </div>
         </a-layout-content>
       </a-layout>
     </a-layout>
@@ -79,14 +81,7 @@
     >
       <a-form id="components-form-demo-normal-login" :form="LoginForm" class="login-form">
         <a-form-item>
-          <a-input
-            size="large"
-            v-decorator="[
-          'userName',
-          { rules: [{ required: true, message: '请输入你的jAccount用户名' }] }
-        ]"
-            placeholder="jAccount用户名"
-          >
+          <a-input size="large" v-decorator="decorators.username" placeholder="jAccount用户名">
             <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)"/>
           </a-input>
         </a-form-item>
@@ -94,10 +89,7 @@
         <a-form-item>
           <a-input
             size="large"
-            v-decorator="[
-          'password',
-          { rules: [{ required: true, message: '请输入你的密码' }] }
-        ]"
+            v-decorator="decorators.password"
             type="password"
             placeholder="jAccount密码"
           >
@@ -108,14 +100,7 @@
         <a-form-item>
           <a-row :gutter="8">
             <a-col :span="12">
-              <a-input
-                size="large"
-                v-decorator="[
-              'captcha',
-              {rules: [{ required: true, message: '请输入验证码' }]}
-            ]"
-                placeholder="验证码"
-              >
+              <a-input size="large" v-decorator="decorators.captcha" placeholder="验证码">
                 <a-icon slot="prefix" type="safety-certificate" style="color: rgba(0,0,0,.25)"/>
               </a-input>
             </a-col>
@@ -126,15 +111,7 @@
         </a-form-item>
 
         <a-form-item>
-          <a-checkbox
-            v-decorator="[
-          'remember',
-          {
-            valuePropName: 'checked',
-            initialValue: false,
-          }
-        ]"
-          >保存我的账户信息</a-checkbox>
+          <a-checkbox v-decorator="decorators.remember">保存我的账户信息</a-checkbox>
         </a-form-item>
       </a-form>
       <template slot="footer">
@@ -151,19 +128,40 @@
 </template>
 
 <script>
+const decorators = {
+  username: [
+    "username",
+    { rules: [{ required: true, message: "请输入你的jAccount用户名" }] }
+  ],
+  password: [
+    "password",
+    { rules: [{ required: true, message: "请输入你的密码" }] }
+  ],
+  captcha: [
+    "captcha",
+    { rules: [{ required: true, message: "请输入验证码" }] }
+  ],
+  remember: [
+    "remember",
+    {
+      valuePropName: "checked",
+      initialValue: false
+    }
+  ]
+};
+
 export default {
   data() {
     return {
-      collapsed: false,
+      decorators,
       LoginFormVisible: true,
-      LoginFormConfirmLoading: false,
-      selected: []
+      LoginFormConfirmLoading: false
     };
   },
   methods: {
     handleCancel() {},
     handelMenuSelect({ key }) {
-      // console.log(key, selectedKeys);
+      console.log(`SELECT: push to ${key}`);
       this.$router.push({ name: key });
     },
     handleSubmit() {
