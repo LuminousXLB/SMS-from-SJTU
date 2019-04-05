@@ -72,14 +72,14 @@
 
     <a-modal
       title="登录"
-      :visible="LoginFormVisible"
+      :visible="formVisible"
       :closable="false"
       :maskClosable="false"
       :destroyOnClose="true"
       @ok="handleSubmit"
-      :confirmLoading="LoginFormConfirmLoading"
+      :confirmLoading="formConfirmLoading"
     >
-      <a-form id="components-form-demo-normal-login" :form="LoginForm" class="login-form">
+      <a-form id="components-form-demo-normal-login" :form="form" class="login-form">
         <a-form-item>
           <a-input size="large" v-decorator="decorators.username" placeholder="jAccount用户名">
             <a-icon slot="prefix" type="user" style="color: rgba(0,0,0,.25)"/>
@@ -119,7 +119,7 @@
           key="submit"
           type="primary"
           html-type="submit"
-          :loading="LoginFormConfirmLoading"
+          :loading="formConfirmLoading"
           @click="handleSubmit"
         >登录</a-button>
       </template>
@@ -154,8 +154,9 @@ export default {
   data() {
     return {
       decorators,
-      LoginFormVisible: true,
-      LoginFormConfirmLoading: false
+      form: this.$form.createForm(this),
+      formVisible: true,
+      formConfirmLoading: false
     };
   },
   methods: {
@@ -165,18 +166,15 @@ export default {
       this.$router.push({ name: key });
     },
     handleSubmit() {
-      this.LoginFormConfirmLoading = true;
-      this.LoginForm.validateFields((err, values) => {
+      this.formConfirmLoading = true;
+      this.form.validateFields((err, values) => {
         if (!err) {
           console.log("Received values of form: ", values);
-          this.LoginFormVisible = false;
+          this.formVisible = false;
         }
-        this.LoginFormConfirmLoading = false;
+        this.formConfirmLoading = false;
       });
     }
-  },
-  beforeCreate() {
-    this.LoginForm = this.$form.createForm(this);
   }
 };
 </script>
