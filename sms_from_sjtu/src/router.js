@@ -5,18 +5,10 @@ Vue.use(Router);
 
 export default new Router({
   mode: 'history',
-  base: process.env.BASE_URL,
+  // base: process.env.BASE_URL,
   routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: () => import('./views/Home.vue')
-    },
-    {
-      path: '/',
-      name: 'send',
-      component: () => import('./views/Send.vue')
-    },
+    {path: '/', name: 'home', component: () => import('./views/Home.vue')},
+    {path: '/send', name: 'send', component: () => import('./views/Send.vue')},
     {
       path: '/about',
       name: 'about',
