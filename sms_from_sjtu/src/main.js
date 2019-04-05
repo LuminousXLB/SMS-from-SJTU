@@ -9,6 +9,9 @@ Vue.use(Form);
 import { Layout } from 'ant-design-vue';
 Vue.use(Layout);
 
+import { List } from 'ant-design-vue';
+Vue.use(List);
+
 import { Menu } from 'ant-design-vue';
 Vue.use(Menu);
 

@@ -155,7 +155,7 @@ export default {
     return {
       decorators,
       form: this.$form.createForm(this),
-      formVisible: true,
+      formVisible: false,
       formConfirmLoading: false
     };
   },
