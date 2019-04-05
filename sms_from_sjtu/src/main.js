@@ -1,8 +1,9 @@
+import { Form } from 'ant-design-vue';
 import Vue from 'vue';
+
 import App from './App.vue';
 import router from './router';
 
-import { Form } from 'ant-design-vue';
 Vue.use(Form);
 
 import { Layout } from 'ant-design-vue';
@@ -10,6 +11,9 @@ Vue.use(Layout);
 
 import { Menu } from 'ant-design-vue';
 Vue.use(Menu);
+
+import { Input } from 'ant-design-vue';
+Vue.use(Input);
 
 import { Button } from 'ant-design-vue';
 Vue.component(Button.name, Button);
@@ -26,15 +30,15 @@ Vue.component(Row.name, Row);
 import { Icon } from 'ant-design-vue';
 Vue.component(Icon.name, Icon);
 
-import { Input } from 'ant-design-vue';
-Vue.component(Input.name, Input);
-
 import { Modal } from 'ant-design-vue';
 Vue.component(Modal.name, Modal);
 
+import { Switch } from 'ant-design-vue';
+Vue.component(Switch.name, Switch);
+
+import { TimePicker } from 'ant-design-vue';
+Vue.component(TimePicker.name, TimePicker);
+
 Vue.config.productionTip = false;
 
-new Vue({
-  router,
-  render: h => h(App)
-}).$mount('#app');
+new Vue({ router, render: h => h(App) }).$mount('#app');
