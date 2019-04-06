@@ -6,7 +6,10 @@ service JaccountService {
 }
 
 message CaptchaNonce { string nonce = 1; }
-message CaptchaImage { bytes img_blob = 1; }
+message CaptchaImage {
+  string content_type = 1;
+  bytes img_blob = 2;
+}
 
 message LoginForm {
   string user = 1;
