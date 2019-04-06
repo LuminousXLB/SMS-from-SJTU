@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0ejaccount.proto\"\x1d\n\x0c\x43\x61ptchaNonce\x12\r\n\x05nonce\x18\x01 \x01(\t\" \n\x0c\x43\x61ptchaImage\x12\x10\n\x08img_blob\x18\x01 \x01(\x0c\":\n\tLoginForm\x12\x0c\n\x04user\x18\x01 \x01(\t\x12\x0e\n\x06passwd\x18\x02 \x01(\t\x12\x0f\n\x07\x63\x61ptcha\x18\x03 \x01(\t\"3\n\x0fGeneralResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t2p\n\x0fJaccountService\x12*\n\nGetCaptcha\x12\r.CaptchaNonce\x1a\r.CaptchaImage\x12\x31\n\x11SubmitCredentials\x12\n.LoginForm\x1a\x10.GeneralResponseb\x06proto3')
+  serialized_pb=_b('\n\x0ejaccount.proto\"\x1d\n\x0c\x43\x61ptchaNonce\x12\r\n\x05nonce\x18\x01 \x01(\t\"6\n\x0c\x43\x61ptchaImage\x12\x14\n\x0c\x63ontent_type\x18\x01 \x01(\t\x12\x10\n\x08img_blob\x18\x02 \x01(\x0c\":\n\tLoginForm\x12\x0c\n\x04user\x18\x01 \x01(\t\x12\x0e\n\x06passwd\x18\x02 \x01(\t\x12\x0f\n\x07\x63\x61ptcha\x18\x03 \x01(\t\"3\n\x0fGeneralResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t2p\n\x0fJaccountService\x12*\n\nGetCaptcha\x12\r.CaptchaNonce\x1a\r.CaptchaImage\x12\x31\n\x11SubmitCredentials\x12\n.LoginForm\x1a\x10.GeneralResponseb\x06proto3')
 )
 
 
@@ -64,8 +64,15 @@ _CAPTCHAIMAGE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='img_blob', full_name='CaptchaImage.img_blob', index=0,
-      number=1, type=12, cpp_type=9, label=1,
+      name='content_type', full_name='CaptchaImage.content_type', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='img_blob', full_name='CaptchaImage.img_blob', index=1,
+      number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -83,7 +90,7 @@ _CAPTCHAIMAGE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=49,
-  serialized_end=81,
+  serialized_end=103,
 )
 
 
@@ -127,8 +134,8 @@ _LOGINFORM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=83,
-  serialized_end=141,
+  serialized_start=105,
+  serialized_end=163,
 )
 
 
@@ -165,8 +172,8 @@ _GENERALRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=143,
-  serialized_end=194,
+  serialized_start=165,
+  serialized_end=216,
 )
 
 DESCRIPTOR.message_types_by_name['CaptchaNonce'] = _CAPTCHANONCE
@@ -211,8 +218,8 @@ _JACCOUNTSERVICE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=196,
-  serialized_end=308,
+  serialized_start=218,
+  serialized_end=330,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetCaptcha',

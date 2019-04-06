@@ -2,13 +2,13 @@ import logging
 import sys
 
 
-def getLogger(name=None):
-    logger = logging.getLogger(__name__ if not name else name)
-    logger.setLevel(logging.INFO)
-    hdlr = logging.StreamHandler(sys.stdout)
-    hdlr.setFormatter(logging.Formatter(
+def get_logger(name=None, level=logging.INFO):
+    logger = logging.getLogger(name if name else __name__)
+    logger.setLevel(level)
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(logging.Formatter(
         "[%(asctime)s][%(levelname)s]<%(name)s> | %(message)s",
         "%H:%M:%S"
     ))
-    logger.addHandler(hdlr)
+    logger.addHandler(handler)
     return logger
