@@ -2,26 +2,12 @@ from abc import ABCMeta, abstractmethod
 from functools import wraps
 from random import random
 from urllib import parse
-import logging
+
 import requests
-import sys
 
-logger = logging.getLogger('jacmanager')
-logger.setLevel(logging.INFO)
+from utils.logger import getLogger
 
-formatter = logging.Formatter("[%(asctime)s][%(levelname)s]<%(name)s> | %(message)s", "%H:%M:%S")
-hdlr = logging.StreamHandler(sys.stdout)
-hdlr.setFormatter(formatter)
-logger.addHandler(hdlr)
-
-
-def get_random():
-    return random() * 10**8
-
-
-def take_qs(url):
-    splitted = parse.urlsplit(url)
-    return parse.parse_qs(splitted.query)
+logger = getLogger()
 
 
 def with_max_retries(count):
@@ -55,7 +41,7 @@ class JAccountLoginManager(metaclass=ABCMeta):
     @abstractmethod
     def check_login_result(self, rsp) -> 'error':
         if 'jaccount.sjtu.edu.cn' in rsp.request.url:
-            qs = take_qs(rsp.request.url)
+            qs = _take_qs(rsp.request.url)
             err = qs.get('err', [''])[0]
             if err == '0':
                 return '用户名或密码不正确'
@@ -68,23 +54,35 @@ class JAccountLoginManager(metaclass=ABCMeta):
         return ''
 
     @with_max_retries(3)
-    def store_variables(self) -> {'returl', 'se', 'sid'}:
+    def store_variables(self):
         rsp = self.session.get(self.get_login_url())
         logger.info('login page return at: %s', rsp.request.url)
-        qs = take_qs(rsp.request.url)
-        self.variables = {k: qs[k][0] for k in ('returl', 'se', 'sid')}
+        form = BeautifulSoup(rsp.text, 'html.parser').find(id='form-input')
+        self.variables = {
+            it.attrs['name']: it.attrs.get('value', '')
+            for it in form.find_all('input', attrs={'name': True})
+        }
 
     @with_max_retries(3)
     def get_captcha(self) -> ('contenttype', 'body'):
         captcha_url = 'https://jaccount.sjtu.edu.cn/jaccount/captcha?%s'
-        rsp = self.session.get(captcha_url % get_random())
+        rsp = self.session.get(captcha_url % _get_random())
         return rsp.headers['Content-Type'], rsp.content
 
     @with_max_retries(3)
     def post_credentials(self, user, passwd, captcha) -> bool:
         action_url = 'https://jaccount.sjtu.edu.cn/jaccount/ulogin'
-        payload = {'user': user, 'pass': passwd, 'captcha': captcha}
-        payload.update(self.variables)
+        payload = self.variables.copy()
+        payload['user'] = user
+        payload['pass'] = passwd
+        payload['captcha'] = captcha
         rsp = self.session.post(action_url, payload)
-        logger.info('post return at: %s', rsp.request.url)
+        logger.info('login post return at: %s', rsp.request.url)
         return self.check_login_result(rsp)
+
+    def _take_qs(url):
+        splitted = parse.urlsplit(url)
+        return parse.parse_qs(splitted.query)
+
+    def _get_random():
+        return random() * 10**8

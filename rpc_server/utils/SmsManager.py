@@ -1,22 +1,22 @@
-from utils import JAccountLoginManager
+from utils.JAccountLoginManager import JAccountLoginManager
+from utils.logger import getLogger
+
+logger = getLogger()
 
 
-class ElectSysManager(JAccountLoginManager):
+class SmsManager(JAccountLoginManager):
     def get_login_url(self):
-        return 'http://electsys.sjtu.edu.cn/edu/login.aspx'
+        return 'http://sms.sjtu.edu.cn'
 
     def check_login_result(self, rsp):
         ret = super().check_login_result(rsp)
         if ret:
             return ret
-        success_url = 'http://electsys.sjtu.edu.cn/edu/student/sdtMain.aspx'
+        success_url = 'http://sms.sjtu.edu.cn/SMS/pages/main.jsp'
         if rsp.request.url == success_url:
             return ''
-        if 'electsys.sjtu.edu.cn' in rsp.request.url:
-            qs = take_qs(rsp.request.url)
-            msg = qs.get('message', [''])[0]
-            if msg:
-                return 'ElectSys says: ' + msg
+        if 'sms.sjtu.edu.cn' in rsp.request.url:
+            return '该账号可能未开通短信服务'
         return '未知错误'
 
     def convert_lessons_to_ics(self, firstday):
@@ -25,4 +25,3 @@ class ElectSysManager(JAccountLoginManager):
         soup = BeautifulSoup(rsp.text, 'html.parser')
         lesson_list = extract_lessons_from_soup(soup)
         return lesson_list
-        # return generate_ics(lesson_list, firstday)
