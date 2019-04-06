@@ -10,6 +10,11 @@ export default new Router({
     {path: '/', name: 'home', component: () => import('./views/Home.vue')},
     {path: '/send', name: 'send', component: () => import('./views/Send.vue')},
     {
+      path: '/outbox',
+      name: 'outbox',
+      component: () => import('./views/Outbox.vue')
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
