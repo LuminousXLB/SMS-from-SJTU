@@ -1,18 +1,251 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1 style="margin: 1em;">导入数据</h1>
+
+    <h2 style="margin: 1em;">选择一个工作簿</h2>
+    <div>
+      <a-upload-dragger
+        name="file"
+        accept=".xls, .xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        :beforeUpload="beforeUpload"
+      >
+        <!-- @change="handleStateChange" -->
+        <p class="ant-upload-drag-icon">
+          <a-icon type="inbox"/>
+        </p>
+        <p class="ant-upload-text">点击此处选择文件或拖拽文件到此处</p>
+        <p class="ant-upload-hint">
+          可以选择一个Excel文件，该文件中
+          <strong>不能存在合并的单元格</strong>
+        </p>
+      </a-upload-dragger>
+    </div>
+
+    <h2 style="margin: 1em;">选择一个工作表</h2>
+    <div v-if="workbook">
+      <a-radio-group v-model="sheetName" @change="handleSheetChange">
+        <a-radio-button
+          v-for="item in workbook.SheetNames"
+          :value="item"
+          :key="`${path}_${item}`"
+        >{{ item }}</a-radio-button>
+      </a-radio-group>
+    </div>
+
+    <h2 style="margin: 1em;">选择表头模式</h2>
+    <div v-if="worksheet">
+      <a-radio-group v-model="headerMode">
+        <a-radio-button :value="1">第一行作为表头</a-radio-button>
+        <a-radio-button :value="2">使用默认表头</a-radio-button>
+        <a-radio-button :value="3">自定义表头</a-radio-button>
+      </a-radio-group>
+    </div>
+    <div v-if="headerMode===3">
+      <a-input
+        v-for="(item, index) in firstRawColumn"
+        :key="`header-${index}`"
+        :placeholder="item"
+        v-model="headerInput[index]"
+      ></a-input>
+    </div>
+
+    <h2 style="margin: 1em;">数据预览</h2>
+    <div v-if="worksheet">
+      <a-table
+        :columns="headersToColumns(headers)"
+        :dataSource="data"
+        size="small"
+        rowKey="__rowNum__"
+        bordered
+      />
+    </div>
+
+    <h2 style="margin: 1em;">选择手机号码所在列</h2>
+    <div v-if="worksheet">
+      <a-radio-group v-model="phoneColumn">
+        <a-radio-button v-for="item in headers" :value="item" :key="`header-${item}`">{{ item }}</a-radio-button>
+      </a-radio-group>
+    </div>
+
+    <h2 style="margin: 1em;">手机号校验记录</h2>
+    <div v-if="phoneColumn">
+      <a-table
+        :columns="headersToColumns(headers)"
+        :dataSource="validate.wrong"
+        size="small"
+        rowKey="__rowNum__"
+        bordered
+      >
+        <template slot="title">
+          <h3>
+            失败记录
+            <sub>不会被发送短信</sub>
+          </h3>
+        </template>
+      </a-table>
+
+      <a-table
+        :columns="headersToColumns(headers)"
+        :dataSource="validate.correct"
+        size="small"
+        rowKey="__rowNum__"
+        bordered
+      >
+        <template slot="title">
+          <h3>
+            成功记录
+            <sub>将要收到短信</sub>
+          </h3>
+        </template>
+      </a-table>
+    </div>
+
+    <h2 style="margin: 1em;">短信内容</h2>
+    <div>
+      <a-textarea rows="5" v-model="smsContentInput"/>
+      <div>
+        <span style="margin: 1em">是否使用模板</span>
+        <a-switch v-model="useTemplate"/>
+        <span style="margin: 1em">
+          如使用模板，请用大括号包裹字段名，如
+          <pre style="display: inline">{Name}</pre>
+        </span>
+      </div>
+      <a-textarea v-if="useTemplate" rows="5" v-model="smsContentSample" readonly/>
+    </div>
+
+    <hr>
+    <div style="margin: 1em;">
+      <center>
+        <a-button type="primary" size="large">确定</a-button>
+      </center>
+    </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import XLSX from "xlsx";
+
+const phonereg = new RegExp("^1\\d{10}$");
 
 export default {
   name: "home",
-  components: {
-    HelloWorld
+  data() {
+    return {
+      path: "",
+      workbook: undefined,
+      worksheet: undefined,
+      sheetName: "",
+      headerMode: 1,
+      headerInput: [],
+      phoneColumn: "",
+      useTemplate: false,
+      smsContentInput: ""
+    };
+  },
+  computed: {
+    smsContentSample() {
+      if (this.validate && this.validate.correct.length > 0) {
+        return this.renderSMSTemplate(
+          this.smsContentInput,
+          this.validate.correct[0]
+        );
+      } else {
+        return "";
+      }
+    },
+    validate() {
+      let wrong = [];
+      let correct = [];
+      if (this.data && this.data.length > 0) {
+        for (let item of this.data) {
+          if (!phonereg.test(item[this.phoneColumn])) {
+            wrong.push(item);
+          } else {
+            correct.push(item);
+          }
+        }
+      }
+      return { wrong, correct };
+    },
+    headers() {
+      if (this.data && this.data.length > 0) {
+        return Object.keys(this.data[0]);
+      } else {
+        return [];
+      }
+    },
+    data() {
+      if (this.worksheet) {
+        const header_options = [undefined, undefined, "A", this.headerInput];
+        return XLSX.utils.sheet_to_json(this.worksheet, {
+          header: header_options[this.headerMode],
+          defval: ""
+        });
+        this.phoneColumn = "";
+      } else {
+        return undefined;
+      }
+    },
+    firstRawColumn() {
+      if (this.worksheet) {
+        let table = XLSX.utils.sheet_to_json(this.worksheet, {
+          header: 1,
+          defval: ""
+        });
+        return table[0];
+      } else {
+        return [];
+      }
+    }
+  },
+  methods: {
+    beforeUpload(file) {
+      this.path = file.path;
+      this.workbook = XLSX.readFile(this.path);
+      this.sheetName = "";
+      return false;
+    },
+    handleSheetChange(e) {
+      this.headerMode = 0;
+      if (this.workbook) {
+        this.worksheet = this.workbook.Sheets[this.sheetName];
+      } else {
+        this.worksheet = undefined;
+      }
+    },
+    headersToColumns(headers) {
+      if (headers.length > 0) {
+        let columns = headers.flatMap(x => {
+          return {
+            title: x,
+            dataIndex: x
+          };
+        });
+        // for (let item of this.headers) {
+        //   columns.push({
+        //     title: item,
+        //     dataIndex: item
+        //   });
+        // }
+        return columns;
+      } else {
+        return [];
+      }
+    },
+    renderSMSTemplate(template, data) {
+      let s = template;
+      for (let [k, v] of Object.entries(data)) {
+        const ts = `{${k}}`;
+        s = s.replace(ts, v);
+      }
+      return s;
+    }
+  },
+  watch: {
+    data(val, oval) {
+      console.log(val);
+    }
   }
 };
 </script>

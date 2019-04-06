@@ -204,6 +204,7 @@ proto.CaptchaImage.prototype.toObject = function(opt_includeInstance) {
  */
 proto.CaptchaImage.toObject = function(includeInstance, msg) {
   var f, obj = {
+    contentType: jspb.Message.getFieldWithDefault(msg, 1, ""),
     imgBlob: msg.getImgBlob_asB64()
   };
 
@@ -242,6 +243,10 @@ proto.CaptchaImage.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setContentType(value);
+      break;
+    case 2:
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setImgBlob(value);
       break;
@@ -274,10 +279,17 @@ proto.CaptchaImage.prototype.serializeBinary = function() {
  */
 proto.CaptchaImage.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getContentType();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
   f = message.getImgBlob_asU8();
   if (f.length > 0) {
     writer.writeBytes(
-      1,
+      2,
       f
     );
   }
@@ -285,16 +297,31 @@ proto.CaptchaImage.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional bytes img_blob = 1;
- * @return {!(string|Uint8Array)}
+ * optional string content_type = 1;
+ * @return {string}
  */
-proto.CaptchaImage.prototype.getImgBlob = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+proto.CaptchaImage.prototype.getContentType = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/** @param {string} value */
+proto.CaptchaImage.prototype.setContentType = function(value) {
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
 /**
- * optional bytes img_blob = 1;
+ * optional bytes img_blob = 2;
+ * @return {!(string|Uint8Array)}
+ */
+proto.CaptchaImage.prototype.getImgBlob = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * optional bytes img_blob = 2;
  * This is a type-conversion wrapper around `getImgBlob()`
  * @return {string}
  */
@@ -305,7 +332,7 @@ proto.CaptchaImage.prototype.getImgBlob_asB64 = function() {
 
 
 /**
- * optional bytes img_blob = 1;
+ * optional bytes img_blob = 2;
  * Note that Uint8Array is not supported on all browsers.
  * @see http://caniuse.com/Uint8Array
  * This is a type-conversion wrapper around `getImgBlob()`
@@ -319,7 +346,7 @@ proto.CaptchaImage.prototype.getImgBlob_asU8 = function() {
 
 /** @param {!(string|Uint8Array)} value */
 proto.CaptchaImage.prototype.setImgBlob = function(value) {
-  jspb.Message.setProto3BytesField(this, 1, value);
+  jspb.Message.setProto3BytesField(this, 2, value);
 };
 
 

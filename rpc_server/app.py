@@ -13,7 +13,7 @@ class JaccountServiceService(proto.JaccountServiceServicer):
         content_type, img_blob = manager.get_captcha(request.nonce)
         return proto.CaptchaImage(content_type=content_type, img_blob=img_blob)
 
-    def SubmitCredentials(self, request: proto.SubmitCredentials, context) -> proto.GeneralResponse:
+    def SubmitCredentials(self, request: proto.LoginForm, context) -> proto.GeneralResponse:
         err_msg = manager.post_credentials(request.user, request.passwd, request.captcha)
         return proto.GeneralResponse(success=not err_msg, message=err_msg)
 

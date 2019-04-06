@@ -1,2 +1,2 @@
 from utils.SmsManager import SmsManager
-from utils.logger import get_logger
+from utils.logger import logger_factory

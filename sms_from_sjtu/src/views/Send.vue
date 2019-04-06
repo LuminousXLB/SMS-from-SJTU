@@ -1,6 +1,7 @@
 <template>
   <div class="send">
     <h1 style="margin: 1em;">发送短信</h1>
+
     <a-form :form="form" layout="vertical" @submit="handleSubmit">
       <a-form-item label="手机号" :extra="phoneLength">
         <a-row>
@@ -43,6 +44,7 @@
 
 <script>
 import moment from "moment";
+import { Promise } from "q";
 
 const decorators = {
   phones: [

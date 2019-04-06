@@ -13,7 +13,7 @@ let win
 
 // Standard scheme must be registered before the app is ready
 protocol.registerStandardSchemes(['app'], { secure: true })
-function createWindow () {
+function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({ width: 800, height: 600 })
 
@@ -78,3 +78,6 @@ if (isDevelopment) {
     })
   }
 }
+
+// require('./rpc/main.js')
+// console.log('background', __dirname)

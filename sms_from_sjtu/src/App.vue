@@ -105,7 +105,7 @@
               </a-input>
             </a-col>
             <a-col :span="12">
-              <img src="@/assets/captcha.jpg" alt>
+              <img :src="captchaUri" @click="refreshCaptcha" style="cursor: pointer">
             </a-col>
           </a-row>
         </a-form-item>
@@ -128,35 +128,38 @@
 </template>
 
 <script>
-const decorators = {
-  username: [
-    "username",
-    { rules: [{ required: true, message: "请输入你的jAccount用户名" }] }
-  ],
-  password: [
-    "password",
-    { rules: [{ required: true, message: "请输入你的密码" }] }
-  ],
-  captcha: [
-    "captcha",
-    { rules: [{ required: true, message: "请输入验证码" }] }
-  ],
-  remember: [
-    "remember",
-    {
-      valuePropName: "checked",
-      initialValue: false
-    }
-  ]
-};
+import { getCaptcha, submitCredentials } from "@/rpc";
 
 export default {
+  name: "app",
   data() {
+    const decorators = {
+      username: [
+        "username",
+        { rules: [{ required: true, message: "请输入你的jAccount用户名" }] }
+      ],
+      password: [
+        "password",
+        { rules: [{ required: true, message: "请输入你的密码" }] }
+      ],
+      captcha: [
+        "captcha",
+        { rules: [{ required: true, message: "请输入验证码" }] }
+      ],
+      remember: [
+        "remember",
+        {
+          valuePropName: "checked",
+          initialValue: false
+        }
+      ]
+    };
     return {
       decorators,
       form: this.$form.createForm(this),
       formVisible: false,
-      formConfirmLoading: false
+      formConfirmLoading: false,
+      captchaUri: ""
     };
   },
   methods: {
@@ -170,11 +173,42 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           console.log("Received values of form: ", values);
-          this.formVisible = false;
+          submitCredentials(values)
+            .then(rsp => {
+              const { success, message } = rsp;
+              if (success) {
+                this.formVisible = false;
+              } else {
+                this.$message.error(message);
+                this.refreshCaptcha();
+              }
+            })
+            .catch(err => {
+              this.$message.error(err);
+              console.error(err);
+              this.refreshCaptcha();
+            })
+            .finally(() => {
+              this.formConfirmLoading = false;
+            });
         }
-        this.formConfirmLoading = false;
       });
+    },
+    refreshCaptcha() {
+      console.log("refreshCaptcha");
+      getCaptcha()
+        .then(uri => {
+          console.log("response", uri);
+          this.captchaUri = uri;
+        })
+        .catch(err => {
+          this.$message.error(err);
+          console.error(err);
+        });
     }
+  },
+  beforeMount() {
+    this.refreshCaptcha();
   }
 };
 </script>

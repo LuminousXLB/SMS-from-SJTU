@@ -1,7 +1,7 @@
 from utils.JAccountLoginManager import JAccountLoginManager
-from utils.logger import get_logger
+from utils.logger import logger_factory
 
-logger = get_logger()
+logger = logger_factory()
 
 
 class SmsManager(JAccountLoginManager):

@@ -2,7 +2,7 @@ import logging
 import sys
 
 
-def get_logger(name=None, level=logging.INFO):
+def logger_factory(name=None, level=logging.INFO):
     logger = logging.getLogger(name if name else __name__)
     logger.setLevel(level)
     handler = logging.StreamHandler(sys.stdout)
