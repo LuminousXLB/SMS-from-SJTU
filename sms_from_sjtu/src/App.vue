@@ -10,8 +10,8 @@
           @select="handelMenuSelect"
         >
           <a-menu-item key="home">
-            <a-icon type="home"/>
-            <span>主页</span>
+            <a-icon type="mail"/>
+            <span>发信</span>
           </a-menu-item>
 
           <a-menu-item key="send">
@@ -19,44 +19,14 @@
             <span>发送短信</span>
           </a-menu-item>
 
-          <a-sub-menu>
-            <span slot="title">
-              <a-icon type="inbox"/>
-              <span>发件箱</span>
-            </span>
-            <a-menu-item key="2">
-              <a-icon type="file"/>
-              <span>定时发件箱</span>
-            </a-menu-item>
-            <a-menu-item key="3">
-              <a-icon type="file"/>
-              <span>已发信箱</span>
-            </a-menu-item>
-          </a-sub-menu>
-
-          <a-menu-item key="4">
+          <a-menu-item key="receive">
             <a-icon type="inbox"/>
-            <span>收件箱</span>
+            <span>收信</span>
           </a-menu-item>
-
-          <a-sub-menu>
-            <span slot="title">
-              <a-icon type="contacts"/>
-              <span>通讯录</span>
-            </span>
-            <a-menu-item key="6">
-              <a-icon type="user-add"/>
-              <span>个人通讯录管理</span>
-            </a-menu-item>
-            <a-menu-item key="8">
-              <a-icon type="usergroup-add"/>
-              <span>公共通讯录管理</span>
-            </a-menu-item>
-          </a-sub-menu>
 
           <a-menu-item key="9">
             <a-icon type="logout"/>
-            <span>退出</span>
+            <span>注销</span>
           </a-menu-item>
         </a-menu>
       </a-layout-header>

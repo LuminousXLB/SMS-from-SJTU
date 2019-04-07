@@ -51,13 +51,7 @@
 
     <h2 style="margin: 1em;">数据预览</h2>
     <div v-if="worksheet">
-      <a-table
-        :columns="headersToColumns(headers)"
-        :dataSource="data"
-        size="small"
-        rowKey="__rowNum__"
-        bordered
-      />
+      <a-table :columns="columns" :dataSource="data" size="small" rowKey="__rowNum__" bordered/>
     </div>
 
     <h2 style="margin: 1em;">选择手机号码所在列</h2>
@@ -70,7 +64,7 @@
     <h2 style="margin: 1em;">手机号校验记录</h2>
     <div v-if="phoneColumn">
       <a-table
-        :columns="headersToColumns(headers)"
+        :columns="columns"
         :dataSource="validate.wrong"
         size="small"
         rowKey="__rowNum__"
@@ -78,14 +72,14 @@
       >
         <template slot="title">
           <h3>
-            失败记录
-            <sub>不会被发送短信</sub>
+            校验失败
+            <sub>以下记录不会被发送短信</sub>
           </h3>
         </template>
       </a-table>
 
       <a-table
-        :columns="headersToColumns(headers)"
+        :columns="columns"
         :dataSource="validate.correct"
         size="small"
         rowKey="__rowNum__"
@@ -93,8 +87,8 @@
       >
         <template slot="title">
           <h3>
-            成功记录
-            <sub>将要收到短信</sub>
+            校验成功
+            <sub>将要使用以下记录发送短信</sub>
           </h3>
         </template>
       </a-table>
@@ -117,7 +111,7 @@
     <hr>
     <div style="margin: 1em;">
       <center>
-        <a-button type="primary" size="large">确定</a-button>
+        <a-button type="primary" size="large" @click="submit">确定</a-button>
       </center>
     </div>
   </div>
@@ -137,19 +131,13 @@ export default {
       worksheet: undefined,
       sheetName: "",
       headerMode: 1,
-      headerInput: [],
-      phoneColumn: "",
-      useTemplate: false,
-      smsContentInput: ""
+      headerInput: []
     };
   },
   computed: {
     smsContentSample() {
       if (this.validate && this.validate.correct.length > 0) {
-        return this.renderSMSTemplate(
-          this.smsContentInput,
-          this.validate.correct[0]
-        );
+        return this.renderTemplateSMS(this.validate.correct[0]);
       } else {
         return "";
       }
@@ -168,13 +156,6 @@ export default {
       }
       return { wrong, correct };
     },
-    headers() {
-      if (this.data && this.data.length > 0) {
-        return Object.keys(this.data[0]);
-      } else {
-        return [];
-      }
-    },
     data() {
       if (this.worksheet) {
         const header_options = [undefined, undefined, "A", this.headerInput];
@@ -182,7 +163,6 @@ export default {
           header: header_options[this.headerMode],
           defval: ""
         });
-        this.phoneColumn = "";
       } else {
         return undefined;
       }
@@ -197,9 +177,71 @@ export default {
       } else {
         return [];
       }
+    },
+    columns() {
+      // STORE
+      return this.$store.getters.columns;
+    },
+    phoneColumn: {
+      // STORE
+      get() {
+        return this.$store.state.pkey;
+      },
+      set(value) {
+        this.$store.commit("pkey", value);
+      }
+    },
+    headers: {
+      // STORE
+      get() {
+        return this.$store.state.headers;
+      },
+      set(value) {
+        this.$store.commit("headers", value);
+      }
+    },
+    useTemplate: {
+      // STORE
+      get() {
+        return this.$store.state.useTemplate;
+      },
+      set(value) {
+        this.$store.commit("useTemplate", value);
+      }
+    },
+    smsContentInput: {
+      // STORE
+      get() {
+        return this.$store.state.template;
+      },
+      set(value) {
+        this.$store.commit("template", value);
+      }
     }
   },
   methods: {
+    submit() {
+      const data = this.validate.correct;
+      this.$store.commit("data", data);
+
+      if (this.useTemplate) {
+        const form = data.map(row => {
+          return {
+            phone: this.getPhoneNumber(row),
+            message: this.renderTemplateSMS(row)
+          };
+        });
+
+        console.log("send message with template", form);
+      } else {
+        const form = {
+          phone: data.map(this.getPhoneNumber),
+          message: this.template
+        };
+
+        console.log("send message without template", form);
+      }
+    },
     beforeUpload(file) {
       this.path = file.path;
       this.workbook = XLSX.readFile(this.path);
@@ -214,37 +256,21 @@ export default {
         this.worksheet = undefined;
       }
     },
-    headersToColumns(headers) {
-      if (headers.length > 0) {
-        let columns = headers.flatMap(x => {
-          return {
-            title: x,
-            dataIndex: x
-          };
-        });
-        // for (let item of this.headers) {
-        //   columns.push({
-        //     title: item,
-        //     dataIndex: item
-        //   });
-        // }
-        return columns;
-      } else {
-        return [];
-      }
+    renderTemplateSMS(row) {
+      return this.$store.getters.renderTemplateSMS(row);
     },
-    renderSMSTemplate(template, data) {
-      let s = template;
-      for (let [k, v] of Object.entries(data)) {
-        const ts = `{${k}}`;
-        s = s.replace(ts, v);
-      }
-      return s;
+    getPhoneNumber(row) {
+      return this.$store.getters.getPhoneNumber(row);
     }
   },
   watch: {
     data(val, oval) {
-      console.log(val);
+      this.phoneColumn = "";
+      if (val && val.length > 0) {
+        this.headers = Object.keys(val[0]);
+      } else {
+        this.headers = [];
+      }
     }
   }
 };
