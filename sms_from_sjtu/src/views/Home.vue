@@ -25,6 +25,7 @@
     <div v-if="workbook">
       <a-radio-group v-model="sheetName" @change="handleSheetChange">
         <a-radio-button
+          buttonStyle="solid"
           v-for="item in workbook.SheetNames"
           :value="item"
           :key="`${path}_${item}`"
@@ -35,9 +36,9 @@
     <h2 style="margin: 1em;">选择表头模式</h2>
     <div v-if="worksheet">
       <a-radio-group v-model="headerMode">
-        <a-radio-button :value="1">第一行作为表头</a-radio-button>
-        <a-radio-button :value="2">使用默认表头</a-radio-button>
-        <a-radio-button :value="3">自定义表头</a-radio-button>
+        <a-radio-button buttonStyle="solid" :value="1">第一行作为表头</a-radio-button>
+        <a-radio-button buttonStyle="solid" :value="2">使用默认表头</a-radio-button>
+        <a-radio-button buttonStyle="solid" :value="3">自定义表头</a-radio-button>
       </a-radio-group>
     </div>
     <div v-if="headerMode===3">
@@ -57,7 +58,12 @@
     <h2 style="margin: 1em;">选择手机号码所在列</h2>
     <div v-if="worksheet">
       <a-radio-group v-model="phoneColumn">
-        <a-radio-button v-for="item in headers" :value="item" :key="`header-${item}`">{{ item }}</a-radio-button>
+        <a-radio-button
+          buttonStyle="solid"
+          v-for="item in headers"
+          :value="item"
+          :key="`header-${item}`"
+        >{{ item }}</a-radio-button>
       </a-radio-group>
     </div>
 
@@ -95,7 +101,7 @@
     </div>
 
     <h2 style="margin: 1em;">短信内容</h2>
-    <div>
+    <div v-if="this.validate.correct.length>0">
       <a-textarea rows="5" v-model="smsContentInput"/>
       <div>
         <span style="margin: 1em">是否使用模板</span>
@@ -105,7 +111,7 @@
           <pre style="display: inline">{Name}</pre>
         </span>
       </div>
-      <a-textarea v-if="useTemplate" rows="5" v-model="smsContentSample" readonly/>
+      <a-textarea v-if="useTemplate" rows="5" v-model="smsContentSample" read-only/>
     </div>
 
     <hr>
@@ -119,8 +125,16 @@
 
 <script>
 import XLSX from "xlsx";
+import { sendPlainMessage, sendTemplateMessage } from "@/rpc";
 
 const phonereg = new RegExp("^1\\d{10}$");
+
+function resolveSendmessageResponse(response, _this) {
+  const { success, receiveid } = response;
+  _this.$store.commit("receiveid", receiveid);
+  console.log(success, receiveid);
+  _this.$router.push({ name: "receive" });
+}
 
 export default {
   name: "home",
@@ -130,7 +144,6 @@ export default {
       workbook: undefined,
       worksheet: undefined,
       sheetName: "",
-      headerMode: 1,
       headerInput: []
     };
   },
@@ -191,6 +204,15 @@ export default {
         this.$store.commit("pkey", value);
       }
     },
+    headerMode: {
+      // STORE
+      get() {
+        return this.$store.state.headerMode;
+      },
+      set(value) {
+        this.$store.commit("headerMode", value);
+      }
+    },
     headers: {
       // STORE
       get() {
@@ -223,23 +245,26 @@ export default {
     submit() {
       const data = this.validate.correct;
       this.$store.commit("data", data);
+      console.log("send sms");
 
       if (this.useTemplate) {
-        const form = data.map(row => {
-          return {
-            phone: this.getPhoneNumber(row),
-            message: this.renderTemplateSMS(row)
-          };
+        sendTemplateMessage(
+          data.map(row => {
+            return {
+              phone: this.getPhoneNumber(row),
+              message: this.renderTemplateSMS(row)
+            };
+          })
+        ).then(response => {
+          resolveSendmessageResponse(response, this);
         });
-
-        console.log("send message with template", form);
       } else {
-        const form = {
-          phone: data.map(this.getPhoneNumber),
-          message: this.template
-        };
-
-        console.log("send message without template", form);
+        sendPlainMessage(
+          data.map(this.getPhoneNumber),
+          this.smsContentInput
+        ).then(response => {
+          resolveSendmessageResponse(response, this);
+        });
       }
     },
     beforeUpload(file) {

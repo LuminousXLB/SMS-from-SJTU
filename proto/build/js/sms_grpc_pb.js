@@ -3,86 +3,74 @@
 'use strict';
 var grpc = require('grpc');
 var sms_pb = require('./sms_pb.js');
-var jaccount_pb = require('./jaccount_pb.js');
 
-function serialize_GeneralResponse(arg) {
-  if (!(arg instanceof jaccount_pb.GeneralResponse)) {
-    throw new Error('Expected argument of type GeneralResponse');
+function serialize_ReceiveMessageRequest(arg) {
+  if (!(arg instanceof sms_pb.ReceiveMessageRequest)) {
+    throw new Error('Expected argument of type ReceiveMessageRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_GeneralResponse(buffer_arg) {
-  return jaccount_pb.GeneralResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_ReceiveMessageRequest(buffer_arg) {
+  return sms_pb.ReceiveMessageRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_MessagesInfos(arg) {
-  if (!(arg instanceof sms_pb.MessagesInfos)) {
-    throw new Error('Expected argument of type MessagesInfos');
+function serialize_ReceiveMessageResponse(arg) {
+  if (!(arg instanceof sms_pb.ReceiveMessageResponse)) {
+    throw new Error('Expected argument of type ReceiveMessageResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_MessagesInfos(buffer_arg) {
-  return sms_pb.MessagesInfos.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_ReceiveMessageResponse(buffer_arg) {
+  return sms_pb.ReceiveMessageResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_MessagesPlain(arg) {
-  if (!(arg instanceof sms_pb.MessagesPlain)) {
-    throw new Error('Expected argument of type MessagesPlain');
+function serialize_SendMessageRequest(arg) {
+  if (!(arg instanceof sms_pb.SendMessageRequest)) {
+    throw new Error('Expected argument of type SendMessageRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_MessagesPlain(buffer_arg) {
-  return sms_pb.MessagesPlain.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_SendMessageRequest(buffer_arg) {
+  return sms_pb.SendMessageRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_PhoneNumbers(arg) {
-  if (!(arg instanceof sms_pb.PhoneNumbers)) {
-    throw new Error('Expected argument of type PhoneNumbers');
+function serialize_SendMessageResponse(arg) {
+  if (!(arg instanceof sms_pb.SendMessageResponse)) {
+    throw new Error('Expected argument of type SendMessageResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_PhoneNumbers(buffer_arg) {
-  return sms_pb.PhoneNumbers.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_SendMessageResponse(buffer_arg) {
+  return sms_pb.SendMessageResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 
 var SmsService = exports.SmsService = {
-  sendPlainMessages: {
-    path: '/Sms/SendPlainMessages',
-    requestStream: false,
+  sendSMS: {
+    path: '/Sms/SendSMS',
+    requestStream: true,
     responseStream: false,
-    requestType: sms_pb.MessagesPlain,
-    responseType: jaccount_pb.GeneralResponse,
-    requestSerialize: serialize_MessagesPlain,
-    requestDeserialize: deserialize_MessagesPlain,
-    responseSerialize: serialize_GeneralResponse,
-    responseDeserialize: deserialize_GeneralResponse,
+    requestType: sms_pb.SendMessageRequest,
+    responseType: sms_pb.SendMessageResponse,
+    requestSerialize: serialize_SendMessageRequest,
+    requestDeserialize: deserialize_SendMessageRequest,
+    responseSerialize: serialize_SendMessageResponse,
+    responseDeserialize: deserialize_SendMessageResponse,
   },
-  sendInnovMessages: {
-    path: '/Sms/SendInnovMessages',
+  receiveMessage: {
+    path: '/Sms/ReceiveMessage',
     requestStream: false,
     responseStream: false,
-    requestType: sms_pb.MessagesInfos,
-    responseType: jaccount_pb.GeneralResponse,
-    requestSerialize: serialize_MessagesInfos,
-    requestDeserialize: deserialize_MessagesInfos,
-    responseSerialize: serialize_GeneralResponse,
-    responseDeserialize: deserialize_GeneralResponse,
-  },
-  receiveMessages: {
-    path: '/Sms/ReceiveMessages',
-    requestStream: false,
-    responseStream: false,
-    requestType: sms_pb.PhoneNumbers,
-    responseType: sms_pb.MessagesInfos,
-    requestSerialize: serialize_PhoneNumbers,
-    requestDeserialize: deserialize_PhoneNumbers,
-    responseSerialize: serialize_MessagesInfos,
-    responseDeserialize: deserialize_MessagesInfos,
+    requestType: sms_pb.ReceiveMessageRequest,
+    responseType: sms_pb.ReceiveMessageResponse,
+    requestSerialize: serialize_ReceiveMessageRequest,
+    requestDeserialize: deserialize_ReceiveMessageRequest,
+    responseSerialize: serialize_ReceiveMessageResponse,
+    responseDeserialize: deserialize_ReceiveMessageResponse,
   },
 };
 

@@ -25,6 +25,9 @@ Vue.use(Radio)
 import { Table } from 'ant-design-vue'
 Vue.use(Table)
 
+import { Transfer } from 'ant-design-vue'
+Vue.use(Transfer)
+
 import { Upload } from 'ant-design-vue'
 Vue.use(Upload)
 

@@ -1,24 +1,25 @@
 syntax = "proto3";
 
-import "jaccount.proto";
-
 service Sms {
-  rpc SendPlainMessages(MessagesPlain) returns (GeneralResponse);
-  rpc SendInnovMessages(MessagesInfos) returns (GeneralResponse);
-  rpc ReceiveMessages(PhoneNumbers) returns (MessagesInfos);
+  rpc SendSMS(stream SendMessageRequest) returns (SendMessageResponse);
+  rpc ReceiveMessage(ReceiveMessageRequest) returns (ReceiveMessageResponse);
 }
 
-message MessageInfo {
-   string phonenum = 1;
-   string content = 2;
-  string timestring = 3;
+message SendMessageRequest {
+  string phone_number = 1;
+  string content = 2;
 }
 
-message PhoneNumbers { repeated string phonenums = 1; }
-
-message MessagesPlain {
-  PhoneNumbers recepients = 1;
-   string content = 2;
+message SendMessageResponse {
+  bool success = 1;
+  string receiveid = 2;
+  string message = 3;
 }
 
-message MessagesInfos { repeated MessageInfo messages = 1; }
+message ReceiveMessageRequest { string receive_id = 1; }
+
+message ReceiveMessageResponse {
+  string send_time = 1;
+  string phone_number = 2;
+  string content = 3;
+}

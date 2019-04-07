@@ -79,7 +79,7 @@ class JAccountLoginManager(metaclass=ABCMeta):
             uuid=self.variables['uuid'],
             t=nonce or self._get_random()
         )
-        rsp = self._get('captcha', captcha_url)
+        rsp = self.get('captcha', captcha_url)
         return rsp.headers['Content-Type'], rsp.content
 
     @with_max_retries(3)
@@ -89,12 +89,12 @@ class JAccountLoginManager(metaclass=ABCMeta):
         payload['pass'] = password
         payload['captcha'] = captcha
 
-        rsp = self._post('login', 'https://jaccount.sjtu.edu.cn/jaccount/ulogin', payload)
+        rsp = self.post('login', 'https://jaccount.sjtu.edu.cn/jaccount/ulogin', payload)
         return self.check_login_result(rsp)
 
     @with_max_retries(3)
     def _fetch_variables(self):
-        rsp = self._get('login page', self.get_login_url())
+        rsp = self.get('login page', self.get_login_url())
         self.login_ret_url = rsp.url
         form = BeautifulSoup(rsp.text, 'html.parser').find(id='form-input')
         return {
@@ -102,12 +102,12 @@ class JAccountLoginManager(metaclass=ABCMeta):
             for it in form.find_all('input', attrs={'name': True})
         }
 
-    def _get(self, name, url):
+    def get(self, name, url):
         rsp = self.session.get(url)
         self._log(name, rsp)
         return rsp
 
-    def _post(self, name, url, data):
+    def post(self, name, url, data):
         rsp = self.session.post(url, data)
         self._log(name, rsp)
         return rsp

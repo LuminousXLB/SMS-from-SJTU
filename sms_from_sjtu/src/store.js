@@ -5,18 +5,21 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    headerMode: 1,
     headers: [],
     data: [],
     pkey: '',
     useTemplate: false,
-    template: ''
+    template: '',
+    receiveid: ''
   },
   getters: {
     columns(state) {
       return state.headers.map(head => {
         return {
           title: head,
-          dataIndex: head
+          dataIndex: head,
+          key: head
         }
       })
     },
@@ -31,11 +34,14 @@ export default new Vuex.Store({
     },
     getPhoneNumber(state) {
       return function(row) {
-        return row[state.pkey]
+        return String(row[state.pkey])
       }
     }
   },
   mutations: {
+    headerMode(state, headerMode) {
+      state.headerMode = headerMode
+    },
     headers(state, headers) {
       state.headers = headers
     },
@@ -50,6 +56,9 @@ export default new Vuex.Store({
     },
     template(state, template) {
       state.template = template
+    },
+    receiveid(state, receiveid) {
+      state.receiveid = receiveid
     }
   }
 })

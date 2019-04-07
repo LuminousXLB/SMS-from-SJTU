@@ -38,8 +38,8 @@ def build_for_js(build_dir):
     if r.returncode:
         print(__func__, 'failed')
         sys.exit(r.returncode)
-    else:
-        copy_tree(build_dir, '../sms_from_sjtu/public/proto')
+    # else:
+        # copy_tree(build_dir, '../sms_from_sjtu/public/proto')
 
 
 def build_for_python(build_dir):
@@ -61,8 +61,8 @@ def build_for_python(build_dir):
     if r:
         print(__func__, 'failed')
         sys.exit(r)
-    else:
-        copy_tree(build_dir, '../rpc_server/proto')
+    # else:
+        # copy_tree(build_dir, '../rpc_server/proto')
 
 
 def main():
