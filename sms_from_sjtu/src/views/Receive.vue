@@ -63,6 +63,7 @@
         </span>
       </a-table>
       <a-button @click="AbortReceivingMessage">终止收信</a-button>
+      <a-button @click="DownloadReplies">下载回信</a-button>
     </div>
   </div>
 </template>
@@ -98,7 +99,8 @@ export default {
       pkey: "pkey",
       useTemplate: "useTemplate",
       template: "template",
-      receiveid: "receiveid"
+      receiveid: "receiveid",
+      rawReplies: "replies"
     }),
     replies() {
       return this.$store.getters.getReplies;
@@ -181,6 +183,21 @@ export default {
           .catch(err => {
             console.error(err);
           });
+      }
+    },
+    DownloadReplies() {
+      const { dialog } = require("electron").remote;
+      const fs = require("fs");
+      let fn = dialog.showSaveDialog({
+        filters: [{ name: "Comma Seperated Files", extensions: ["csv"] }]
+      });
+      if (!fn.endsWith(".csv")) {
+        fn = fn + ".csv";
+      }
+      if (fn) {
+        const ws = XLSX.utils.json_to_sheet(this.rawReplies);
+        const stream = XLSX.stream.to_csv(ws);
+        stream.pipe(fs.createWriteStream(fn));
       }
     }
   },
