@@ -11,9 +11,9 @@ class JaccountServiceStub(object):
     def __init__(self, channel):
         """Constructor.
 
-        Args:
-          channel: A grpc.Channel.
-        """
+    Args:
+      channel: A grpc.Channel.
+    """
         self.GetCaptcha = channel.unary_unary(
             '/JaccountService/GetCaptcha',
             request_serializer=jaccount__pb2.CaptchaNonce.SerializeToString,

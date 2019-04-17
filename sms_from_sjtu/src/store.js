@@ -11,7 +11,8 @@ export default new Vuex.Store({
     pkey: '',
     useTemplate: false,
     template: '',
-    receiveid: ''
+    receiveid: '',
+    replies: []
   },
   getters: {
     columns(state) {
@@ -36,6 +37,18 @@ export default new Vuex.Store({
       return function(row) {
         return String(row[state.pkey])
       }
+    },
+    getReplies(state) {
+      let obj = {}
+      for (let reply of state.replies) {
+        const { phone } = reply
+        if (obj[phone]) {
+          obj[phone].push(reply)
+        } else {
+          obj[phone] = [reply]
+        }
+      }
+      return obj
     }
   },
   mutations: {
@@ -59,6 +72,13 @@ export default new Vuex.Store({
     },
     receiveid(state, receiveid) {
       state.receiveid = receiveid
+    },
+    reply(state, { id, time, phone, message }) {
+      state.replies.push({ id, time, phone, message })
+      if (phone && parseInt(id) >= parseInt(state.receiveid)) {
+        state.receiveid = new String(parseInt(id) + 1)
+      }
+      console.log('commit', id, time, phone, message)
     }
   }
 })

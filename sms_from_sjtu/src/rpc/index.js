@@ -2,6 +2,7 @@ import { JaccountServiceClient } from './proto/jaccount_grpc_pb'
 import { CaptchaNonce, LoginForm } from './proto/jaccount_pb'
 import { ReceiveMessageRequest, SendMessageRequest } from './proto/sms_pb'
 import { SmsClient } from './proto/sms_grpc_pb'
+import store from '@/store'
 
 // import async from 'async'
 import grpc from 'grpc'
@@ -103,15 +104,23 @@ export function recieveMessage(receiveid) {
   return new Promise((resolve, reject) => {
     let request = new ReceiveMessageRequest()
     request.setReceiveId(receiveid)
-    smsClient.receiveMessage(request, function(err, response) {
-      if (err) {
-        reject(err)
-      } else {
-        const sendTime = response.getSendTime()
-        const phone = response.getPhoneNumber()
-        const message = response.getContent()
-        resolve({ sendTime, phone, message })
-      }
+    console.log(request)
+
+    let call = smsClient.receiveMessage(request)
+
+    call.on('data', function(response) {
+      // console.log(response)
+      const id = response.getReceiveId()
+      const time = response.getSendTime()
+      const phone = response.getPhoneNumber()
+      const message = response.getContent()
+      store.commit('reply', { id, time, phone, message })
+    })
+    call.on('end', function() {
+      resolve()
+    })
+    call.on('error', function(e) {
+      reject(e)
     })
   })
 }

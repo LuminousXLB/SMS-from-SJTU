@@ -2,7 +2,7 @@ syntax = "proto3";
 
 service Sms {
   rpc SendSMS(stream SendMessageRequest) returns (SendMessageResponse);
-  rpc ReceiveMessage(ReceiveMessageRequest) returns (ReceiveMessageResponse);
+  rpc ReceiveMessage(ReceiveMessageRequest) returns (stream ReceiveMessageResponse);
 }
 
 message SendMessageRequest {
@@ -19,7 +19,8 @@ message SendMessageResponse {
 message ReceiveMessageRequest { string receive_id = 1; }
 
 message ReceiveMessageResponse {
-  string send_time = 1;
-  string phone_number = 2;
-  string content = 3;
+  string receive_id = 1;
+  string send_time = 2;
+  string phone_number = 3;
+  string content = 4;
 }

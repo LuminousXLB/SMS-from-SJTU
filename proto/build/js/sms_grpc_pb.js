@@ -64,7 +64,7 @@ var SmsService = exports.SmsService = {
   receiveMessage: {
     path: '/Sms/ReceiveMessage',
     requestStream: false,
-    responseStream: false,
+    responseStream: true,
     requestType: sms_pb.ReceiveMessageRequest,
     responseType: sms_pb.ReceiveMessageResponse,
     requestSerialize: serialize_ReceiveMessageRequest,

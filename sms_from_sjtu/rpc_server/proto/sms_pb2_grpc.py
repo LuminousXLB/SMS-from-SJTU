@@ -19,7 +19,7 @@ class SmsStub(object):
             request_serializer=sms__pb2.SendMessageRequest.SerializeToString,
             response_deserializer=sms__pb2.SendMessageResponse.FromString,
         )
-        self.ReceiveMessage = channel.unary_unary(
+        self.ReceiveMessage = channel.unary_stream(
             '/Sms/ReceiveMessage',
             request_serializer=sms__pb2.ReceiveMessageRequest.SerializeToString,
             response_deserializer=sms__pb2.ReceiveMessageResponse.FromString,
@@ -52,7 +52,7 @@ def add_SmsServicer_to_server(servicer, server):
             request_deserializer=sms__pb2.SendMessageRequest.FromString,
             response_serializer=sms__pb2.SendMessageResponse.SerializeToString,
         ),
-        'ReceiveMessage': grpc.unary_unary_rpc_method_handler(
+        'ReceiveMessage': grpc.unary_stream_rpc_method_handler(
             servicer.ReceiveMessage,
             request_deserializer=sms__pb2.ReceiveMessageRequest.FromString,
             response_serializer=sms__pb2.ReceiveMessageResponse.SerializeToString,

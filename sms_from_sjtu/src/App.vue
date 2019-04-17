@@ -14,19 +14,9 @@
             <span>发信</span>
           </a-menu-item>
 
-          <a-menu-item key="send">
-            <a-icon type="mail"/>
-            <span>发送短信</span>
-          </a-menu-item>
-
           <a-menu-item key="receive">
             <a-icon type="inbox"/>
             <span>收信</span>
-          </a-menu-item>
-
-          <a-menu-item key="9">
-            <a-icon type="logout"/>
-            <span>注销</span>
           </a-menu-item>
         </a-menu>
       </a-layout-header>
@@ -79,10 +69,10 @@
             </a-col>
           </a-row>
         </a-form-item>
-
+        <!--
         <a-form-item>
           <a-checkbox v-decorator="decorators.remember">保存我的账户信息</a-checkbox>
-        </a-form-item>
+        </a-form-item>-->
       </a-form>
       <template slot="footer">
         <a-button
@@ -154,7 +144,7 @@ export default {
               }
             })
             .catch(err => {
-              this.$message.error(err);
+              this.$message.error(err.message);
               console.error(err);
               this.refreshCaptcha();
             })

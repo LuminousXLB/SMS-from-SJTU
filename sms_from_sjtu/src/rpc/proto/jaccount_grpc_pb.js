@@ -50,7 +50,6 @@ function deserialize_LoginForm(buffer_arg) {
   return jaccount_pb.LoginForm.deserializeBinary(new Uint8Array(buffer_arg))
 }
 
-// var JaccountServiceService = (exports.JaccountServiceService = {
 export var JaccountServiceService = {
   getCaptcha: {
     path: '/JaccountService/GetCaptcha',
@@ -79,7 +78,3 @@ export var JaccountServiceService = {
 export var JaccountServiceClient = grpc.makeGenericClientConstructor(
   JaccountServiceService
 )
-
-// exports.JaccountServiceClient = grpc.makeGenericClientConstructor(
-//   JaccountServiceService
-// )

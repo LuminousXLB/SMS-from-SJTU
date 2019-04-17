@@ -54,7 +54,6 @@ function deserialize_SendMessageResponse(buffer_arg) {
   )
 }
 
-// = exports.SmsService
 export var SmsService = {
   sendSMS: {
     path: '/Sms/SendSMS',
@@ -70,7 +69,7 @@ export var SmsService = {
   receiveMessage: {
     path: '/Sms/ReceiveMessage',
     requestStream: false,
-    responseStream: false,
+    responseStream: true,
     requestType: sms_pb.ReceiveMessageRequest,
     responseType: sms_pb.ReceiveMessageResponse,
     requestSerialize: serialize_ReceiveMessageRequest,

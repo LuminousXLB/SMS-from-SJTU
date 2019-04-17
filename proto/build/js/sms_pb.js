@@ -571,9 +571,10 @@ proto.ReceiveMessageResponse.prototype.toObject = function(opt_includeInstance) 
  */
 proto.ReceiveMessageResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    sendTime: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    phoneNumber: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    content: jspb.Message.getFieldWithDefault(msg, 3, "")
+    receiveId: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    sendTime: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    phoneNumber: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    content: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -612,13 +613,17 @@ proto.ReceiveMessageResponse.deserializeBinaryFromReader = function(msg, reader)
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setSendTime(value);
+      msg.setReceiveId(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setPhoneNumber(value);
+      msg.setSendTime(value);
       break;
     case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPhoneNumber(value);
+      break;
+    case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setContent(value);
       break;
@@ -651,24 +656,31 @@ proto.ReceiveMessageResponse.prototype.serializeBinary = function() {
  */
 proto.ReceiveMessageResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getSendTime();
+  f = message.getReceiveId();
   if (f.length > 0) {
     writer.writeString(
       1,
       f
     );
   }
-  f = message.getPhoneNumber();
+  f = message.getSendTime();
   if (f.length > 0) {
     writer.writeString(
       2,
       f
     );
   }
-  f = message.getContent();
+  f = message.getPhoneNumber();
   if (f.length > 0) {
     writer.writeString(
       3,
+      f
+    );
+  }
+  f = message.getContent();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
       f
     );
   }
@@ -676,47 +688,62 @@ proto.ReceiveMessageResponse.serializeBinaryToWriter = function(message, writer)
 
 
 /**
- * optional string send_time = 1;
+ * optional string receive_id = 1;
  * @return {string}
  */
-proto.ReceiveMessageResponse.prototype.getSendTime = function() {
+proto.ReceiveMessageResponse.prototype.getReceiveId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.ReceiveMessageResponse.prototype.setSendTime = function(value) {
+proto.ReceiveMessageResponse.prototype.setReceiveId = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
 /**
- * optional string phone_number = 2;
+ * optional string send_time = 2;
  * @return {string}
  */
-proto.ReceiveMessageResponse.prototype.getPhoneNumber = function() {
+proto.ReceiveMessageResponse.prototype.getSendTime = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /** @param {string} value */
-proto.ReceiveMessageResponse.prototype.setPhoneNumber = function(value) {
+proto.ReceiveMessageResponse.prototype.setSendTime = function(value) {
   jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional string content = 3;
+ * optional string phone_number = 3;
  * @return {string}
  */
-proto.ReceiveMessageResponse.prototype.getContent = function() {
+proto.ReceiveMessageResponse.prototype.getPhoneNumber = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
 /** @param {string} value */
-proto.ReceiveMessageResponse.prototype.setContent = function(value) {
+proto.ReceiveMessageResponse.prototype.setPhoneNumber = function(value) {
   jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional string content = 4;
+ * @return {string}
+ */
+proto.ReceiveMessageResponse.prototype.getContent = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/** @param {string} value */
+proto.ReceiveMessageResponse.prototype.setContent = function(value) {
+  jspb.Message.setProto3StringField(this, 4, value);
 };
 
 

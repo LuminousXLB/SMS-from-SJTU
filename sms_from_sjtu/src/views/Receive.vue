@@ -22,7 +22,6 @@
         :columns="SplitColumn"
         :dataSource="ProccessedData"
         size="small"
-        rowKey="__rowNum__"
         bordered
         :pagination="paginationOptions"
       >
@@ -50,10 +49,10 @@
           <a-col :span="8">
             <fieldset>
               <legend>收信内容</legend>
-              <div v-if="received[row[pkey]]">
+              <div v-if="replies[row[pkey]]">
                 <p
-                  v-for="{message, phone, sendTime} in received[row[pkey]]"
-                  :key="`received-from-${phone}-${sendTime}`"
+                  v-for="{message, phone, sendTime} in replies[row[pkey]]"
+                  :key="`replies-from-${phone}-${sendTime}`"
                 >{{ message }}</p>
               </div>
             </fieldset>
@@ -63,6 +62,7 @@
           <a-icon type="smile-o"/>Name
         </span>
       </a-table>
+      <a-button @click="AbortReceivingMessage">终止收信</a-button>
     </div>
   </div>
 </template>
@@ -76,7 +76,6 @@ export default {
   name: "receive",
   data() {
     return {
-      received: {},
       targetKeys: [],
       paginationOptions: {
         simple: false,
@@ -84,7 +83,9 @@ export default {
         hideOnSinglePage: true,
         defaultPageSize: 20,
         pageSizeOptions: ["10", "20", "30", "50", "100", "200"]
-      }
+      },
+      busy: false,
+      suspend: false
     };
   },
   computed: {
@@ -96,16 +97,25 @@ export default {
       data: "data",
       pkey: "pkey",
       useTemplate: "useTemplate",
-      template: "template"
+      template: "template",
+      receiveid: "receiveid"
     }),
-    receiveid: {
-      get() {
-        return parseInt(this.$store.state.receiveid);
-      },
-      set(value) {
-        this.$store.commit("receiveid", String(value));
-      }
+    replies() {
+      return this.$store.getters.getReplies;
     },
+    // receiveid: {
+    //   get() {
+    //     return parseInt(this.$store.state.receiveid);
+    //   },
+    //   set(value) {
+    //     console.log("Receive.vue", "set receiveid", value);
+    //     if (value) {
+    //       this.$store.commit("receiveid", String(value));
+    //     } else {
+    //       this.$store.commit("receiveid", undefined);
+    //     }
+    //   }
+    // },
     SplitColumn() {
       let columns = this.headers
         .filter(x => {
@@ -128,14 +138,16 @@ export default {
       return columns;
     },
     ProccessedData() {
-      return this.data.map(row => {
+      return this.data.map((row, index) => {
         let obj = Object.assign({}, row);
 
-        if (this.received[this.getPhoneNumber(row)]) {
+        if (this.replies[this.getPhoneNumber(row)]) {
           obj["reply"] = "是";
         } else {
           obj["reply"] = "否";
         }
+
+        obj["key"] = `display_data_${row[this.pkey]}`;
 
         return obj;
       });
@@ -155,33 +167,33 @@ export default {
       } else {
         return this.template;
       }
-    }
-  },
-  mounted() {
-    let timer = setInterval(() => {
+    },
+    AbortReceivingMessage() {
+      this.busy = true;
+    },
+    receive() {
       if (this.receiveid) {
+        this.busy = true;
         recieveMessage(String(this.receiveid))
-          .then(response => {
-            const { phone } = response;
-            if (phone !== "") {
-              this.receiveid = this.receiveid + 1;
-              if (this.received[phone]) {
-                this.$set(this.received, phone, [
-                  ...this.received[phone],
-                  response
-                ]);
-              } else {
-                this.$set(this.received, phone, [response]);
-              }
-              // this.received.__ob__.dep.notify();
-              // console.log(this.ProccessedData);
-            }
+          .then(() => {
+            this.busy = false;
           })
           .catch(err => {
             console.error(err);
           });
       }
-    }, 10000);
+    }
+  },
+  watch: {
+    busy(busy, oval) {
+      console.log("busy", `from ${busy} to ${oval}`);
+      if (!busy && !this.suspend) {
+        window.setTimeout(this.receive, 5000);
+      }
+    }
+  },
+  mounted() {
+    this.receive();
   }
 };
 </script>

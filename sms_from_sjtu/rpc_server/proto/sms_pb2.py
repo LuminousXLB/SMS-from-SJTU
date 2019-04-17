@@ -3,11 +3,11 @@
 
 import sys
 
+_b = sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode('latin1'))
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-_b = sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode('latin1'))
 
 # @@protoc_insertion_point(imports)
 
@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
     syntax='proto3',
     serialized_options=None,
     serialized_pb=_b(
-        '\n\tsms.proto\";\n\x12SendMessageRequest\x12\x14\n\x0cphone_number\x18\x01 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\t\"J\n\x13SendMessageResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x11\n\treceiveid\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\"+\n\x15ReceiveMessageRequest\x12\x12\n\nreceive_id\x18\x01 \x01(\t\"R\n\x16ReceiveMessageResponse\x12\x11\n\tsend_time\x18\x01 \x01(\t\x12\x14\n\x0cphone_number\x18\x02 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x03 \x01(\t2\x80\x01\n\x03Sms\x12\x36\n\x07SendSMS\x12\x13.SendMessageRequest\x1a\x14.SendMessageResponse(\x01\x12\x41\n\x0eReceiveMessage\x12\x16.ReceiveMessageRequest\x1a\x17.ReceiveMessageResponseb\x06proto3')
+        '\n\tsms.proto\";\n\x12SendMessageRequest\x12\x14\n\x0cphone_number\x18\x01 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x02 \x01(\t\"J\n\x13SendMessageResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x11\n\treceiveid\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\"+\n\x15ReceiveMessageRequest\x12\x12\n\nreceive_id\x18\x01 \x01(\t\"f\n\x16ReceiveMessageResponse\x12\x12\n\nreceive_id\x18\x01 \x01(\t\x12\x11\n\tsend_time\x18\x02 \x01(\t\x12\x14\n\x0cphone_number\x18\x03 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x04 \x01(\t2\x82\x01\n\x03Sms\x12\x36\n\x07SendSMS\x12\x13.SendMessageRequest\x1a\x14.SendMessageResponse(\x01\x12\x43\n\x0eReceiveMessage\x12\x16.ReceiveMessageRequest\x1a\x17.ReceiveMessageResponse0\x01\x62\x06proto3')
 )
 
 _SENDMESSAGEREQUEST = _descriptor.Descriptor(
@@ -141,22 +141,29 @@ _RECEIVEMESSAGERESPONSE = _descriptor.Descriptor(
     containing_type=None,
     fields=[
         _descriptor.FieldDescriptor(
-            name='send_time', full_name='ReceiveMessageResponse.send_time', index=0,
+            name='receive_id', full_name='ReceiveMessageResponse.receive_id', index=0,
             number=1, type=9, cpp_type=9, label=1,
             has_default_value=False, default_value=_b("").decode('utf-8'),
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
             serialized_options=None, file=DESCRIPTOR),
         _descriptor.FieldDescriptor(
-            name='phone_number', full_name='ReceiveMessageResponse.phone_number', index=1,
+            name='send_time', full_name='ReceiveMessageResponse.send_time', index=1,
             number=2, type=9, cpp_type=9, label=1,
             has_default_value=False, default_value=_b("").decode('utf-8'),
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
             serialized_options=None, file=DESCRIPTOR),
         _descriptor.FieldDescriptor(
-            name='content', full_name='ReceiveMessageResponse.content', index=2,
+            name='phone_number', full_name='ReceiveMessageResponse.phone_number', index=2,
             number=3, type=9, cpp_type=9, label=1,
+            has_default_value=False, default_value=_b("").decode('utf-8'),
+            message_type=None, enum_type=None, containing_type=None,
+            is_extension=False, extension_scope=None,
+            serialized_options=None, file=DESCRIPTOR),
+        _descriptor.FieldDescriptor(
+            name='content', full_name='ReceiveMessageResponse.content', index=3,
+            number=4, type=9, cpp_type=9, label=1,
             has_default_value=False, default_value=_b("").decode('utf-8'),
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
@@ -174,7 +181,7 @@ _RECEIVEMESSAGERESPONSE = _descriptor.Descriptor(
     oneofs=[
     ],
     serialized_start=195,
-    serialized_end=277,
+    serialized_end=297,
 )
 
 DESCRIPTOR.message_types_by_name['SendMessageRequest'] = _SENDMESSAGEREQUEST
@@ -217,8 +224,8 @@ _SMS = _descriptor.ServiceDescriptor(
     file=DESCRIPTOR,
     index=0,
     serialized_options=None,
-    serialized_start=280,
-    serialized_end=408,
+    serialized_start=300,
+    serialized_end=430,
     methods=[
         _descriptor.MethodDescriptor(
             name='SendSMS',
