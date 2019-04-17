@@ -117,7 +117,7 @@ export default {
     return {
       decorators,
       form: this.$form.createForm(this),
-      formVisible: false,
+      formVisible: true,
       formConfirmLoading: false,
       captchaUri: ""
     };
